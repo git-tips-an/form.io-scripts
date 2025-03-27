@@ -11,7 +11,6 @@
     const mainForm = formInstances[0];
     console.log('[Form.io Custom] Found form instance:', mainForm);
 
-    // Bind the previewPDF event ONCE
     if (!window._pdfPreviewBound) {
       Formio.events.on('previewPDF', () => {
         console.log('[Form.io Custom] previewPDF event triggered.');
@@ -80,7 +79,6 @@
     }
   }
 
-  // Wait for DOM and Formio to be ready
   function waitUntilReady() {
     if (typeof Formio === 'undefined' || !Formio.forms) {
       console.log('[Form.io Custom] Waiting for Formio...');
