@@ -15,7 +15,8 @@
       Formio.events.on('previewPDF', () => {
         console.log('[Form.io Custom] previewPDF event triggered.');
 
-        const data = mainForm.submission.data || {};
+        //const data = mainForm.submission.data || {};
+        const data = mainForm._data || {};
         console.log('[Form.io Custom] Submission data:', data);
 
         const modal = document.createElement('div');
