@@ -1,70 +1,46 @@
-function waitForFormAndBind() {
-  const formInstances = Object.values(Formio.forms);
-  if (formInstances.length > 0) {
-    const mainForm = formInstances[0]; // Grab the first rendered form instance
+(function () {
+  console.log('[Form.io Custom] Script started.');
 
-    Formio.events.on('previewPDF', () => {
-      const data = mainForm.submission.data;
+  function bindPreviewEvent() {
+    const formInstances = Object.values(Formio.forms || {});
+    if (formInstances.length === 0) {
+      console.log('[Form.io Custom] No form instances found. Retrying...');
+      return setTimeout(bindPreviewEvent, 500);
+    }
 
-      const modal = document.createElement('div');
-      modal.id = 'dynamicModal';
-      modal.style.cssText = `
-        position:fixed;
-        top:0; left:0;
-        width:100vw;
-        height:100vh;
-        background-color:rgba(0,0,0,0.6);
-        z-index:9999;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      `;
+    const mainForm = formInstances[0];
+    console.log('[Form.io Custom] Found form instance:', mainForm);
 
-      const content = document.createElement('div');
-      content.style.cssText = `
-        background:white;
-        width:80%;
-        height:90%;
-        padding:20px;
-        border-radius:10px;
-        overflow:auto;
-        position:relative;
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      `;
+    // Bind the previewPDF event ONCE
+    if (!window._pdfPreviewBound) {
+      Formio.events.on('previewPDF', () => {
+        console.log('[Form.io Custom] previewPDF event triggered.');
 
-      const closeBtn = document.createElement('button');
-      closeBtn.innerText = 'Close';
-      closeBtn.style.cssText = `
-        position:absolute;
-        top:10px;
-        right:10px;
-        padding:8px 12px;
-        background:#f44336;
-        color:white;
-        border:none;
-        border-radius:5px;
-        cursor:pointer;
-      `;
-      closeBtn.onclick = () => modal.remove();
+        const data = mainForm.submission.data || {};
+        console.log('[Form.io Custom] Submission data:', data);
 
-      content.appendChild(closeBtn);
-      modal.appendChild(content);
-      document.body.appendChild(modal);
+        const modal = document.createElement('div');
+        modal.id = 'dynamicModal';
+        modal.style.cssText = `
+          position:fixed;
+          top:0; left:0;
+          width:100vw;
+          height:100vh;
+          background-color:rgba(0,0,0,0.6);
+          z-index:9999;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        `;
 
-      Formio.createForm(content, 'https://tmewfqfbvfqyixx.form.io/ssa263', {
-        readOnly: true
-      }).then(pdfForm => {
-        pdfForm.submission = {
-          data: {
-            claimantName: data.claimantName
-          }
-        };
-      });
-    });
-  } else {
-    // Retry if form hasn't rendered yet
-    setTimeout(waitForFormAndBind, 250);
-  }
-}
-
-waitForFormAndBind();
+        const content = document.createElement('div');
+        content.style.cssText = `
+          background:white;
+          width:80%;
+          height:90%;
+          padding:20px;
+          border-radius:10px;
+          overflow:auto;
+          position:relative;
+          box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        `;
