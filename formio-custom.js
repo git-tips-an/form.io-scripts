@@ -8,14 +8,19 @@
       return setTimeout(bindPreviewEvent, 500);
     }
 
-    const mainForm = formInstances[0];
-    console.log('[Form.io Custom] Found form instance:', mainForm);
+    // Find the wizard form by checking for 'claimantName' in its _data
+    const mainForm = formInstances.find(f => f._data && f._data.claimantName);
+    if (!mainForm) {
+      console.warn('[Form.io Custom] Could not find wizard form with claimantName.');
+      return;
+    }
+
+    console.log('[Form.io Custom] Found wizard form:', mainForm);
 
     if (!window._pdfPreviewBound) {
       Formio.events.on('previewPDF', () => {
         console.log('[Form.io Custom] previewPDF event triggered.');
 
-        //const data = mainForm.submission.data || {};
         const data = mainForm._data || {};
         console.log('[Form.io Custom] Submission data:', data);
 
