@@ -44,3 +44,51 @@
           position:relative;
           box-shadow: 0 0 20px rgba(0,0,0,0.3);
         `;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.innerText = 'Close';
+        closeBtn.style.cssText = `
+          position:absolute;
+          top:10px;
+          right:10px;
+          padding:8px 12px;
+          background:#f44336;
+          color:white;
+          border:none;
+          border-radius:5px;
+          cursor:pointer;
+        `;
+        closeBtn.onclick = () => modal.remove();
+
+        content.appendChild(closeBtn);
+        modal.appendChild(content);
+        document.body.appendChild(modal);
+
+        Formio.createForm(content, 'https://tmewfqfbvfqyixx.form.io/ssa263', {
+          readOnly: true
+        }).then(pdfForm => {
+          pdfForm.submission = {
+            data: {
+              claimantName: data.claimantName
+            }
+          };
+        });
+      });
+
+      window._pdfPreviewBound = true;
+      console.log('[Form.io Custom] previewPDF event bound.');
+    }
+  }
+
+  // Wait for DOM and Formio to be ready
+  function waitUntilReady() {
+    if (typeof Formio === 'undefined' || !Formio.forms) {
+      console.log('[Form.io Custom] Waiting for Formio...');
+      return setTimeout(waitUntilReady, 500);
+    }
+
+    bindPreviewEvent();
+  }
+
+  waitUntilReady();
+})();
