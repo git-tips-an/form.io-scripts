@@ -1,58 +1,70 @@
-Formio.events.on('previewPDF', () => {
-  const data = Formio.forms['263Web'].submission.data;
+function waitForFormAndBind() {
+  const formInstances = Object.values(Formio.forms);
+  if (formInstances.length > 0) {
+    const mainForm = formInstances[0]; // Grab the first rendered form instance
 
-  const modal = document.createElement('div');
-  modal.id = 'dynamicModal';
-  modal.style.cssText = `
-    position:fixed;
-    top:0; left:0;
-    width:100vw;
-    height:100vh;
-    background-color:rgba(0,0,0,0.6);
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  `;
+    Formio.events.on('previewPDF', () => {
+      const data = mainForm.submission.data;
 
-  const content = document.createElement('div');
-  content.style.cssText = `
-    background:white;
-    width:80%;
-    height:90%;
-    padding:20px;
-    border-radius:10px;
-    overflow:auto;
-    position:relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  `;
+      const modal = document.createElement('div');
+      modal.id = 'dynamicModal';
+      modal.style.cssText = `
+        position:fixed;
+        top:0; left:0;
+        width:100vw;
+        height:100vh;
+        background-color:rgba(0,0,0,0.6);
+        z-index:9999;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      `;
 
-  const closeBtn = document.createElement('button');
-  closeBtn.innerText = 'Close';
-  closeBtn.style.cssText = `
-    position:absolute;
-    top:10px;
-    right:10px;
-    padding:8px 12px;
-    background:#f44336;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-  `;
-  closeBtn.onclick = () => modal.remove();
+      const content = document.createElement('div');
+      content.style.cssText = `
+        background:white;
+        width:80%;
+        height:90%;
+        padding:20px;
+        border-radius:10px;
+        overflow:auto;
+        position:relative;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      `;
 
-  content.appendChild(closeBtn);
-  modal.appendChild(content);
-  document.body.appendChild(modal);
+      const closeBtn = document.createElement('button');
+      closeBtn.innerText = 'Close';
+      closeBtn.style.cssText = `
+        position:absolute;
+        top:10px;
+        right:10px;
+        padding:8px 12px;
+        background:#f44336;
+        color:white;
+        border:none;
+        border-radius:5px;
+        cursor:pointer;
+      `;
+      closeBtn.onclick = () => modal.remove();
 
-  Formio.createForm(content, 'https://tmewfqfbvfqyixx.form.io/ssa263', {
-    readOnly: true
-  }).then(pdfForm => {
-    pdfForm.submission = {
-      data: {
-        claimantName: data.claimantName
-      }
-    };
-  });
-});
+      content.appendChild(closeBtn);
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+
+      Formio.createForm(content, 'https://tmewfqfbvfqyixx.form.io/ssa263', {
+        readOnly: true
+      }).then(pdfForm => {
+        pdfForm.submission = {
+          data: {
+            claimantName: data.claimantName
+          }
+        };
+      });
+    });
+  } else {
+    // Retry if form hasn't rendered yet
+    setTimeout(waitForFormAndBind, 250);
+  }
+}
+
+waitForFormAndBind();
