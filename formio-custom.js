@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Script started1.');
+  console.log('[Form.io Custom] Script started2.');
 
   function bindPreviewEvent() {
     const formInstances = Object.values(Formio.forms || {});
@@ -8,28 +8,20 @@
       return setTimeout(bindPreviewEvent, 500);
     }
 
-        // Find the wizard form by checking for 'claimantName' in its _data
-    const mainForm = formInstances.find(f => f._form && f._form._id === '67c86897f5c865b62f989a7e');
-    if (!mainForm) {
-      console.warn('[Form.io Custom] Could not find wizard form by ID.');
-      return;
-    }
-    const data = mainForm._data || {};
-    console.log('[Form.io Custom] Submission data (correct wizard):', data);
-
-
-    console.log('[Form.io Custom] Found wizard form:', mainForm);
+    const mainForm = formInstances[0];
+    console.log('[Form.io Custom] Found form instance:', mainForm);
 
     if (!window._pdfPreviewBound) {
       Formio.events.on('previewPDF', () => {
         console.log('[Form.io Custom] previewPDF event triggered.');
 
+        //const data = mainForm.submission.data || {};
         const data = mainForm._data || {};
         console.log('[Form.io Custom] Submission data:', data);
 
         const modal = document.createElement('div');
         modal.id = 'dynamicModal';
-        modal.style.cssText = `
+        modal.style.cssText = 
           position:fixed;
           top:0; left:0;
           width:100vw;
@@ -39,10 +31,10 @@
           display:flex;
           align-items:center;
           justify-content:center;
-        `;
+        ;
 
         const content = document.createElement('div');
-        content.style.cssText = `
+        content.style.cssText = 
           background:white;
           width:80%;
           height:90%;
@@ -51,11 +43,11 @@
           overflow:auto;
           position:relative;
           box-shadow: 0 0 20px rgba(0,0,0,0.3);
-        `;
+        ;
 
         const closeBtn = document.createElement('button');
         closeBtn.innerText = 'Close';
-        closeBtn.style.cssText = `
+        closeBtn.style.cssText = 
           position:absolute;
           top:10px;
           right:10px;
@@ -65,7 +57,7 @@
           border:none;
           border-radius:5px;
           cursor:pointer;
-        `;
+        ;
         closeBtn.onclick = () => modal.remove();
 
         content.appendChild(closeBtn);
