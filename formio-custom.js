@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Bootstrap modal PDF script loaded33');
+  console.log('[Form.io Custom] Bootstrap modal PDF script loaded (debug version)');
 
   function showPdfInContainer(data) {
     console.log('[Form.io Custom] Showing PDF with data:', data);
@@ -18,7 +18,6 @@
       pdfForm.submission = {
         data: {
           claimantName: data.claimantName || ''
-          // Add other fields here if needed
         }
       };
     });
@@ -32,7 +31,6 @@
     modal.removeAttribute('aria-hidden');
     document.body.classList.add('modal-open');
 
-    // Add backdrop manually
     if (!document.querySelector('.modal-backdrop')) {
       const backdrop = document.createElement('div');
       backdrop.className = 'modal-backdrop fade show';
@@ -64,12 +62,22 @@
     if (!triggerBtn.dataset.bound) {
       triggerBtn.addEventListener('click', () => {
         const claimantComponent = mainForm.getComponent('claimantName');
+        const rawDomValue = document.querySelector('[name="data[claimantName]"]')?.value;
+
+        // DEBUG LOGS
+        console.log('👉 _data.claimantName:', mainForm._data?.claimantName);
+        console.log('👉 claimantComponent:', claimantComponent);
+        console.log('👉 claimantComponent.getValue():', claimantComponent?.getValue());
+        console.log('👉 DOM value:', rawDomValue);
+
         const formData = {
           claimantName: mainForm._data?.claimantName ||
-                        claimantComponent?.getValue() || ''
+                        claimantComponent?.getValue() ||
+                        rawDomValue ||
+                        ''
         };
 
-        console.log('[Form.io Custom] Button clicked. Using data:', formData);
+        console.log('[Form.io Custom] Final data passed to PDF:', formData);
 
         openModal();
         showPdfInContainer(formData);
