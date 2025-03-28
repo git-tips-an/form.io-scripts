@@ -23,7 +23,7 @@
         const modal = document.createElement('div');
         modal.id = 'dynamicModal';
         modal.style.cssText = `
-          position:fixed;
+          position:absolute;
           top:0; left:0;
           width:100vw;
           height:100vh;
