@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Bootstrap modal PDF script loaded (debug version)');
+  console.log('[Form.io Custom] Bootstrap modal PDF script loaded (final version 🎯)');
 
   function showPdfInContainer(data) {
     console.log('[Form.io Custom] Showing PDF with data:', data);
@@ -18,6 +18,7 @@
       pdfForm.submission = {
         data: {
           claimantName: data.claimantName || ''
+          // Add more fields here as needed (ssn, phone, etc.)
         }
       };
     });
@@ -61,23 +62,12 @@
 
     if (!triggerBtn.dataset.bound) {
       triggerBtn.addEventListener('click', () => {
-        const claimantComponent = mainForm.getComponent('claimantName');
-        const rawDomValue = document.querySelector('[name="data[claimantName]"]')?.value;
-
-        // DEBUG LOGS
-        console.log('👉 _data.claimantName:', mainForm._data?.claimantName);
-        console.log('👉 claimantComponent:', claimantComponent);
-        console.log('👉 claimantComponent.getValue():', claimantComponent?.getValue());
-        console.log('👉 DOM value:', rawDomValue);
-
+        // ✅ THIS is the magic line:
         const formData = {
-          claimantName: mainForm._data?.claimantName ||
-                        claimantComponent?.getValue() ||
-                        rawDomValue ||
-                        ''
+          claimantName: mainForm.data?.claimantName || ''
         };
 
-        console.log('[Form.io Custom] Final data passed to PDF:', formData);
+        console.log('[Form.io Custom] Button clicked. Final data:', formData);
 
         openModal();
         showPdfInContainer(formData);
