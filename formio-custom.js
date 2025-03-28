@@ -1,34 +1,23 @@
 (function () {
-  console.log('[Form.io Custom] Bootstrap modal script started.');
+  console.log('[Form.io Custom] Bootstrap 4 modal script started.');
 
-  function showPdfInModal(data) {
-    console.log('[Form.io Custom] Showing modal with data:', data);
+  function showPdfInContainer(data) {
+    console.log('[Form.io Custom] Loading PDF with data:', data);
 
     const container = document.getElementById('pdfPreviewContainer');
     if (!container) {
-      console.warn('[Form.io Custom] Container not found!');
+      console.warn('[Form.io Custom] PDF container not found!');
       return;
     }
 
-    container.innerHTML = ''; // clear previous PDF
-    const modalEl = document.getElementById('pdfPreviewModal');
-    if (!modalEl) {
-      console.warn('[Form.io Custom] Modal not found!');
-      return;
-    }
-
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
+    container.innerHTML = ''; // Clear previous form
 
     Formio.createForm(container, 'https://tmewfqfbvfqyixx.form.io/ssa263', {
       readOnly: true
     }).then(pdfForm => {
       pdfForm.submission = {
         data: {
-          claimantName: data.claimantName || '',
-          // Add more fields as needed
-          // ssn: data.ssn || '',
-          // phone: data.phone || ''
+          claimantName: data.claimantName || ''
         }
       };
     });
@@ -39,37 +28,34 @@
     const mainForm = formInstances.find(f => f._data?.claimantName !== undefined);
 
     if (!mainForm) {
-      console.log('[Form.io Custom] Form not ready. Retrying...');
+      console.log('[Form.io Custom] Main form not ready. Retrying...');
       return setTimeout(tryBind, 500);
     }
 
-    console.log('[Form.io Custom] Found form:', mainForm);
-
-    const button = document.querySelector('.trigger-preview');
-    if (!button) {
-      console.log('[Form.io Custom] Button not ready. Retrying...');
+    const triggerBtn = document.querySelector('.trigger-preview');
+    if (!triggerBtn) {
+      console.log('[Form.io Custom] Button not found. Retrying...');
       return setTimeout(tryBind, 500);
     }
 
-    if (!button.dataset.bound) {
-      button.addEventListener('click', () => {
-        console.log('[Form.io Custom] Preview button clicked!');
-        const data = mainForm._data || {};
-        showPdfInModal(data);
+    if (!triggerBtn.dataset.bound) {
+      triggerBtn.addEventListener('click', () => {
+        console.log('[Form.io Custom] Button clicked!');
+        showPdfInContainer(mainForm._data || {});
       });
 
-      button.dataset.bound = 'true';
+      triggerBtn.dataset.bound = 'true';
       console.log('[Form.io Custom] Preview button bound!');
     }
   }
 
-  function waitUntilReady() {
+  function waitForFormio() {
     if (typeof Formio === 'undefined' || !Formio.forms) {
       console.log('[Form.io Custom] Waiting for Formio...');
-      return setTimeout(waitUntilReady, 500);
+      return setTimeout(waitForFormio, 500);
     }
     tryBind();
   }
 
-  waitUntilReady();
+  waitForFormio();
 })();
