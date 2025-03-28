@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Script started3.');
+  console.log('[Form.io Custom] Script started.');
 
   function bindPreviewEvent() {
     const formInstances = Object.values(Formio.forms || {});
@@ -13,6 +13,19 @@
     console.log('[Form.io Custom] Found correct form instance:', mainForm);
     console.log('[Form.io Custom] Current form data:', mainForm._data);
 
+    // Fallback manual trigger using button class
+    setTimeout(() => {
+      const btn = document.querySelector('.trigger-preview');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          console.log('[Form.io Custom] Manual fallback: button click');
+          Formio.events.emit('previewPDF');
+        });
+      } else {
+        console.warn('[Form.io Custom] Preview button not found for fallback');
+      }
+    }, 1000);
+
     if (!window._pdfPreviewBound) {
       Formio.events.on('previewPDF', () => {
         console.log('[Form.io Custom] previewPDF event triggered.');
@@ -23,7 +36,7 @@
         const modal = document.createElement('div');
         modal.id = 'dynamicModal';
         modal.style.cssText = `
-          position:absolute;
+          position:fixed;
           top:0; left:0;
           width:100vw;
           height:100vh;
@@ -71,6 +84,7 @@
           pdfForm.submission = {
             data: {
               claimantName: data.claimantName
+              // Add more fields here as needed (e.g., ssn: data.ssn)
             }
           };
         });
