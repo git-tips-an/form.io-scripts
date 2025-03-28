@@ -8,12 +8,15 @@
       return setTimeout(bindPreviewEvent, 500);
     }
 
-    // Find the wizard form by checking for 'claimantName' in its _data
-    const mainForm = formInstances.find(f => f._data && f._data.claimantName);
+        // Find the wizard form by checking for 'claimantName' in its _data
+    const mainForm = formInstances.find(f => f._form && f._form._id === '67c86897f5c865b62f989a7e');
     if (!mainForm) {
-      console.warn('[Form.io Custom] Could not find wizard form with claimantName.');
+      console.warn('[Form.io Custom] Could not find wizard form by ID.');
       return;
     }
+    const data = mainForm._data || {};
+    console.log('[Form.io Custom] Submission data (correct wizard):', data);
+
 
     console.log('[Form.io Custom] Found wizard form:', mainForm);
 
