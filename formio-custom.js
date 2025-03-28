@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Script started.');
+  console.log('[Form.io Custom] Script started1.');
 
   function bindPreviewEvent() {
     const formInstances = Object.values(Formio.forms || {});
