@@ -1,5 +1,5 @@
 (function () {
-  console.log('[Form.io Custom] Bootstrap modal PDF script loaded22');
+  console.log('[Form.io Custom] Bootstrap modal PDF script loaded33');
 
   function showPdfInContainer(data) {
     console.log('[Form.io Custom] Showing PDF with data:', data);
@@ -18,7 +18,7 @@
       pdfForm.submission = {
         data: {
           claimantName: data.claimantName || ''
-          // Add other fields here as needed
+          // Add other fields here if needed
         }
       };
     });
@@ -63,12 +63,14 @@
 
     if (!triggerBtn.dataset.bound) {
       triggerBtn.addEventListener('click', () => {
+        const claimantComponent = mainForm.getComponent('claimantName');
         const formData = {
           claimantName: mainForm._data?.claimantName ||
-            document.querySelector('[name="data[claimantName]"]')?.value || ''
+                        claimantComponent?.getValue() || ''
         };
 
         console.log('[Form.io Custom] Button clicked. Using data:', formData);
+
         openModal();
         showPdfInContainer(formData);
       });
